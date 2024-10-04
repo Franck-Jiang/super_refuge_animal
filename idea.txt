@@ -3,14 +3,14 @@ Gestionnaire d'animaux dans un refuge animal
 Authentification 												Utilisateur	Soigneur	Admin
 
 GET 	/index			-- Liste d'animaux présent dans le refuge					X		X		X
-GET	/animals/id		-- Fiche médical de l'animal dans le refuge n° id				X		X		X
+GET	    /animals/id		-- Fiche médical de l'animal dans le refuge n° id				X		X		X
 PUT 	/animals/id		-- Mise à jour des informations de l'animal dans le refuge					X		X
 DELETE	/animals/id		-- Retire l'animal du refuge									X		X
 POST 	/new 			-- Ajoute un animal au refuge 									X		X
-GET	/info_animals/id	-- Fiche médicale animal (utilisation de FK)									X
+GET	    /info_animals/id	-- Fiche médicale animal (utilisation de FK)									X
 PUT 	/info_animals/id	-- Mise à jour des informations d'un animal									X
 DELETE	/info_animals/id	-- Retire la fiche médicale d'un animal										X
 POST	/info_add		-- Ajout d'une nouvel animal											X
-GET	/adopt			-- Adopte une animal dans le refuge (choix, filtre)				X		X		X
+GET	    /adopt			-- Adopte une animal dans le refuge (choix, filtre)				X		X		X
 GET 	/history		-- Historique des arrivées, changements, adoptions (table transaction)		X		X		X
 
