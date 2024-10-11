@@ -2,7 +2,6 @@ from sqlalchemy import create_engine, Column, Integer, String, Float, Date, Fore
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.orm import sessionmaker
 
-Base = declarative_base()
 
 class Owner(Base):
     __tablename__ = 'owner'
