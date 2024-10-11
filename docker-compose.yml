@@ -8,6 +8,7 @@ services:
     build: .
     depends_on:
       - db
+      - pg_admin
     networks:
       - default
     volumes:
@@ -16,15 +17,15 @@ services:
     ports:
     - "5000:5000"
     env_file:
-      - .env
+      - db.env
 
   db:
     image: postgres
     restart: always
     volumes:
-      - app/db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
     env_file:
-      - .env
+      - db.env
     ports:
     - "5432:5432"
 
@@ -32,12 +33,12 @@ services:
     image: dpage/pgadmin4
     restart: always
     ports:
-      - "9001:9001"
+      - "9001:80"
     env_file:
-      - .env
+      - pg_admin.env
     volumes:
       - pg_admin_data:/var/lib/pg_admin/data
 
 volumes:
   pg_admin_data:
-  app/db_data:
+  db_data:

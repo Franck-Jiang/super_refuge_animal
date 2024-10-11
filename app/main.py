@@ -1,5 +1,7 @@
 from fastapi import FastAPI
-from app import api
+from sqlalchemy import select
+from models import AnimalRecord
+from db import session
 
 
 app = FastAPI(
@@ -12,5 +14,10 @@ app = FastAPI(
 def read_root():
     return {"message": "Welcome to my FastAPI project!"}
 
+@app.get("/animals")
+def get_animals():
+    stmt = select(AnimalRecord)
+    res = session.execute(stmt)
+    return res
 # Include other routes from `api.py`
-app.include_router(api.router)
+#app.include_router(api.router)
