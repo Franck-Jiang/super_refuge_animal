@@ -21,7 +21,7 @@ services:
 
   db:
     image: postgres
-    restart: always
+    restart: no
     volumes:
       - db_data:/var/lib/postgresql/data
     env_file:
@@ -31,7 +31,7 @@ services:
 
   pg_admin:
     image: dpage/pgadmin4
-    restart: always
+    restart: no
     ports:
       - "9001:80"
     env_file:

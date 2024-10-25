@@ -1,7 +1,6 @@
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
 username = os.getenv("POSTGRES_USER")
 password = os.getenv("POSTGRES_PASSWORD")
@@ -13,5 +12,4 @@ engine = create_engine(DATABASE_URL)
 Base = declarative_base()
 Base.metadata.create_all(engine)
 
-Session = sessionmaker(bind=engine)
-session = Session()
+session = sessionmaker(bind=engine)()
