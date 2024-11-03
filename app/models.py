@@ -17,15 +17,15 @@ class Owner(Base):
     def __repr__(self):
         return f"<Owner(id={self.id}, first_name='{self.first_name}', last_name='{self.last_name}', email='{self.email}', phone='{self.phone}')>"
 
-class AnimalList(Base):
-    __tablename__ = 'animal_list'
+class AnimalSpecies(Base):
+    __tablename__ = 'animal_species'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    specie_name = Column(String(100), nullable=False, unique=True)
+    species_name = Column(String(100), nullable=False, unique=True)
     food = Column(String(100))
 
     def __repr__(self):
-        return f"<AnimalList(id={self.id}, specie_name='{self.specie_name}', food='{self.food}')>"
+        return f"<AnimalSpecies(id={self.id}, specie_name='{self.species_name}', food='{self.food}')>"
 
 class AnimalRecord(Base):
     __tablename__ = 'animal_records'
@@ -35,8 +35,8 @@ class AnimalRecord(Base):
     description = Column(String(255))
     weight = Column(Float)
     arrival_date = Column(Date)
-    animal_id = Column(Integer, ForeignKey('animal_list.id'), nullable=False)
-    animal = relationship("AnimalList", backref="animal_records")
+    animal_id = Column(Integer, ForeignKey('animal_species.id'), nullable=False)
+    animal = relationship("AnimalSpecies", backref="animal_records")
 
     def __repr__(self):
         return f"<AnimalRecord(id={self.id}, name='{self.name}', species_id={self.species_id}, weight={self.weight}, arrival_date='{self.arrival_date}')>"

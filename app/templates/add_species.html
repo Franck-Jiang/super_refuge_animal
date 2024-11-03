@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a new species</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Add a new species</h2>
+        {% if message %}
+            <p style="color: green;">{{ message }}</p>
+        {% endif %}
+        <form action="/animal/create_species" method="post">
+            <div class="form-group">
+                <label for="name">Species name</label>
+                <input type="text" id="species_name" name="species_name" placeholder="Enter species name..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Food</label>
+                <input type="text" id="food" name="food" placeholder="Enter species favorite food...">
+            </div>
+
+            <button type="submit">Add new species</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -6,10 +6,12 @@ from fastapi.security import HTTPBearer
 from starlette.responses import RedirectResponse
 
 from sqlalchemy import select, text
-from models import Owner, AnimalList, AnimalRecord, User
+from models import Owner, AnimalSpecies, AnimalRecord, User
 from db import session
 from auth import verify_autorization_header
 from schemas.user import User as model_user
+from routers.animal import router_animal
+
 
 templates = Jinja2Templates(directory="templates")
 security = HTTPBearer()
@@ -20,13 +22,15 @@ app = FastAPI(
     version="0.0.1",
 )
 
+app.include_router(router_animal)
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to my FastAPI project!"}
 
 @app.get("/animals")
 def get_animals():
-    stmt = select(AnimalList)
+    stmt = select(AnimalSpecies)
     res = session.execute(stmt).scalars().all()
     return res
 
@@ -48,11 +52,14 @@ def signin(request: Request, user: model_user):
     query = select(User.username, User.password).where(User.username == username, User.password == password)
     res = session.execute(query).scalars().first()
     print(res==None)
+    # ajouter un fichier temp cookie
+    # ajouter un ttl
     return 200
      
 @app.get("/add_animal")
 async def add_animal_form(request: Request):
-    species = session.query(AnimalList).all()
+    species = session.query(AnimalSpecies).all()
+    print("species queried")
     print(species)
     return templates.TemplateResponse("add_animal.html", {"request": request, "species": species})
 

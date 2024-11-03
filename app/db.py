@@ -13,3 +13,10 @@ Base = declarative_base()
 Base.metadata.create_all(engine)
 
 session = sessionmaker(bind=engine)()
+
+def get_db():
+    try:
+        db = session
+        yield db
+    finally:
+        db.close()
