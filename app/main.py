@@ -11,6 +11,7 @@ from db import session
 from auth import verify_autorization_header
 from schemas.user import User as model_user
 from routers.animal import router_animal
+from routers.user import router_user
 
 
 templates = Jinja2Templates(directory="templates")
@@ -23,6 +24,7 @@ app = FastAPI(
 )
 
 app.include_router(router_animal)
+app.include_router(router_user)
 
 @app.get("/")
 def read_root():

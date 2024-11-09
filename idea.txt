@@ -18,9 +18,12 @@ POST    /signup             -- Inscription utilisateur
 
 {
   "username": "root",
-  "password": "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2"
+  "password": "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2",
+  "role" : 1
 }
 username : root
 password : root
+role : 1
+
 JWT
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJwYXNzd29yZCI6IjQ4MTM0OTRkMTM3ZTE2MzFiYmEzMDFkNWFjYWI2ZTdiYjdhYTc0Y2UxMTg1ZDQ1NjU2NWVmNTFkNzM3Njc3YjIifQ.MFLFKcWaLwUzHQ7d7994IoShNJFJQ3PfI41fkwT-5AU
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJwYXNzd29yZCI6IjQ4MTM0OTRkMTM3ZTE2MzFiYmEzMDFkNWFjYWI2ZTdiYjdhYTc0Y2UxMTg1ZDQ1NjU2NWVmNTFkNzM3Njc3YjIiLCJyb2xlIjoxfQ.jU0B6fVE8Xwn6dy4cuWdME2r4ks7DYXSFlvd_t6DUWs
