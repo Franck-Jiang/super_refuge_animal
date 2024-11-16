@@ -53,11 +53,7 @@ def get_current_user(access_token: str = Header(None)) -> tuple[str, int]:
     print(access_token)
     # Check if access_token is present and starts with "Bearer"
     if not access_token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Access token is missing.",
-            headers={"WWW-Authenticate": "Bearer"}
-        )
+        return None, None
     
     if not access_token.startswith("Bearer "):
         raise HTTPException(

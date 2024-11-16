@@ -1,14 +1,12 @@
 from fastapi import FastAPI, Request, Form, Depends, Header
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.security import HTTPBearer
-
-from starlette.responses import RedirectResponse
 
 from sqlalchemy import select, text
 from models import Owner, AnimalSpecies, AnimalRecord, User
 from db import session
-from auth import verify_autorization_header
+from auth import verify_autorization_header, generate_access_token, get_current_user
 from schemas.user import User as model_user
 from routers.animal import router_animal
 from routers.user import router_user
@@ -27,8 +25,8 @@ app.include_router(router_animal)
 app.include_router(router_user)
 
 @app.get("/")
-def read_root():
-    return {"message": "Welcome to my FastAPI project!"}
+def read_root(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request})
 
 @app.get("/animals")
 def get_animals():
@@ -36,28 +34,7 @@ def get_animals():
     res = session.execute(stmt).scalars().all()
     return res
 
-@app.get("/signup")
-def signup(request: Request):
-    return templates.TemplateResponse("signup.html", {"request": request})
 
-@app.post("/signup")
-async def signup(request: Request, username: str = Form(...), email: str = Form(...), password: str = Form(...)):
-    print(f"Username: {username}, Email: {email}, Password: {password}")
-    access_token = generate_access_token(db=db, user_login=user_login)
-    return RedirectResponse(url="/welcome", status_code=303)
-
-@app.post("/signin")
-def signin(request: Request, user: model_user):
-    print("here")
-    username = user.username
-    password = user.password
-    query = select(User.username, User.password).where(User.username == username, User.password == password)
-    res = session.execute(query).scalars().first()
-    print(res==None)
-    # ajouter un fichier temp cookie
-    # ajouter un ttl
-    return 200
-     
 @app.get("/add_animal")
 async def add_animal_form(request: Request):
     species = session.query(AnimalSpecies).all()
@@ -66,8 +43,8 @@ async def add_animal_form(request: Request):
     return templates.TemplateResponse("add_animal.html", {"request": request, "species": species})
 
 @app.get("/welcome", dependencies=[Depends(security)])
-def welcome(request: Request):
-    return templates.TemplateResponse("welcome.html")
+def welcome(request: Request, access_token: str):
+    return templates.TemplateResponse("welcome.html", {"request": request, "access_token": access_token})
 
 @app.post("/query")
 def query(request: Request, query: str):
@@ -75,3 +52,17 @@ def query(request: Request, query: str):
     print(a.all())
     session.commit()
     session.flush()
+    
+@app.get("/role")
+def get_role(request: Request, user: User = Depends(get_current_user)):
+    print(f"{user=}")
+    _, role = user
+    if role == 1 :
+        return templates.TemplateResponse("admin.html", {"request": request})
+    elif role == 2 :
+        return templates.TemplateResponse("user.html", {"request": request})
+    elif role == 3 :
+        return templates.TemplateResponse("worker.html", {"request": request})
+    else:
+        return templates.TemplateResponse("welcome.html", {"request": request})
+    
