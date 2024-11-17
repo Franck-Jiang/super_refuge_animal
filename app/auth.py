@@ -34,15 +34,9 @@ def _encode_jwt(user: User) -> str:
 
 def generate_access_token(
     db: Session,
-    user_login: User):
-    
-    user = (
-        db.query(User).filter(
-            User.username == user_login.username,
-            User.password == user_login.password,
-        ).first()
-    )
+    user: User):
 
+    print(user)
     if not user:
         raise HTTPException(status_code=404, detail="Incorrect username or password")
 

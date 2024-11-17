@@ -15,33 +15,42 @@ from auth import generate_access_token
 router_user = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
+
+def welcome(request: Request, access_token: str):
+    return templates.TemplateResponse("welcome.html", {"request": request, "access_token": access_token})
+
 @router_user.get("/signup")
 async def sign_up(request: Request):
     print("HTML lololol")
     return templates.TemplateResponse("signup.html", {"request": request})
 
+@router_user.post("/signup")
+def signup(request: Request,
+           user: model_user = Form(...), 
+           db: Session = Depends(get_db)):
+    
+    print(f"Username: {user.username}, Password: {user.password}")
+    new_user = create_user(db=db, user=User(username=user.username, password=user.password))
+    access_token = generate_access_token(db=db, 
+                                        user=new_user)
+    
+    return welcome(request=request, access_token=access_token)
+
+
 @router_user.get("/signin")
 def signup(request: Request):
     return templates.TemplateResponse("signin.html", {"request": request})
 
-@router_user.post("/signup")
-async def signup(request: Request, user = model_user):
-    print(f"Username: {user.username}, Password: {user.password}")
-    access_token = generate_access_token(db=session, 
-                                         user_login=user)
-    return RedirectResponse(url="/welcome", status_code=303)
-
 @router_user.post("/signin")
-def signin(request: Request, username: str, password: str):
+def signin(request: Request, 
+           username: str = Form(),
+           password: str = Form(), 
+           db: Session = Depends(get_db)):
     print("here")
     hashed = hashlib.sha256(password.encode()).hexdigest()
-    query = select(User.username, User.password).where(User.username == username, User.password == hashed)
-    res = session.execute(query).scalars().first()  
+    query = select(User).where(User.username == username, User.password == hashed)
+    res = db.execute(query).scalars().first()  
     print(res)
-    return 200
-     
-@router_user.post("/create_user")
-def create_user_route(user: model_user = Form(...), db: Session = Depends(get_db)):
-    print("create_user_route")
-    db_user = create_user(db=db, user=user)
-    return RedirectResponse(url="/welcome", status_code=303)
+    access_token = generate_access_token(db=db, 
+                                         user=res)
+    return welcome(request=request, access_token=access_token)

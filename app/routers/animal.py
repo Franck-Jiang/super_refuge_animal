@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, Request, Form
 from fastapi.templating import Jinja2Templates
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from crud import create_animal, create_species
 from schemas.animal import Species, Animal
 from db import get_db, session
-from models import AnimalSpecies
+from models import AnimalSpecies, AnimalRecord
 from auth import allowed_roles
 
 router_animal = APIRouter(prefix="/animal")
@@ -31,3 +32,13 @@ async def add_species_form(request: Request):
 def create_species_route(species: Species = Form(...), db: Session = Depends(get_db)):
     db_user = create_species(db=db, species=species)
     return db_user
+
+@router_animal.get("/show")
+def show_animals(request: Request, db: Session = Depends(get_db)):
+    animals = db.query(AnimalRecord, AnimalSpecies.species_name).join(AnimalSpecies, AnimalRecord.animal_id == AnimalSpecies.id).all()
+    species = db.query(AnimalSpecies.species_name)
+    print(animals)
+    for a in animals:
+        print(a[0].name)
+    return templates.TemplateResponse("show_animals.html", {"request": request, "animals": animals, "species": species})
+

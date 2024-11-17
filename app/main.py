@@ -28,23 +28,12 @@ app.include_router(router_user)
 def read_root(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})
 
-@app.get("/animals")
-def get_animals():
-    stmt = select(AnimalSpecies)
-    res = session.execute(stmt).scalars().all()
-    return res
-
-
 @app.get("/add_animal")
 async def add_animal_form(request: Request):
     species = session.query(AnimalSpecies).all()
     print("species queried")
     print(species)
     return templates.TemplateResponse("add_animal.html", {"request": request, "species": species})
-
-@app.get("/welcome", dependencies=[Depends(security)])
-def welcome(request: Request, access_token: str):
-    return templates.TemplateResponse("welcome.html", {"request": request, "access_token": access_token})
 
 @app.post("/query")
 def query(request: Request, query: str):

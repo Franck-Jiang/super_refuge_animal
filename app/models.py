@@ -39,7 +39,7 @@ class AnimalRecord(Base):
     animal = relationship("AnimalSpecies", backref="animal_records")
 
     def __repr__(self):
-        return f"<AnimalRecord(id={self.id}, name='{self.name}', species_id={self.species_id}, weight={self.weight}, arrival_date='{self.arrival_date}')>"
+        return f"<AnimalRecord(id={self.id}, name='{self.name}', animal_id={self.animal_id}, weight={self.weight}, arrival_date='{self.arrival_date}')>"
 
 class UserCategory(Base):
     __tablename__ = "user_category"
