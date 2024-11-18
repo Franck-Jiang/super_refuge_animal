@@ -18,14 +18,35 @@
             border-radius: 5px;
             display: inline-block;
         }
+
+        .home-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            position: fixed;
+            top: 10px; /* Distance from the top */
+            right: 10px; /* Distance from the right */
+        }
+
+        .home-btn:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
     <h1>Welcome!</h1>
-    <p>Thank you for signing up.</p>
+    <p>Thank you for signing up {{ user }}.</p>
     <div class="token-box">
         <h3>Your Access Token:</h3>
         <p>{{ access_token }}</p>
     </div>
+    <a href="/" class="home-btn">Home</a>
+
 </body>
+
 </html>

@@ -109,6 +109,14 @@
             background-color: #45a049;
         }
     </style>
+
+    <script>
+        // Function to display popup
+        function showPopup(message) {
+            alert(message);
+        }
+    </script>
+
 </head>
 <body>
     <div class="container">
@@ -134,5 +142,11 @@
     </div>
     <!-- Home Button -->
     <a href="/" class="home-btn">Home</a>
+
+    {% if error_message %}
+    <script>
+        showPopup("{{ error_message }}");
+    </script>
+    {% endif %}
 </body>
 </html>

@@ -45,6 +45,19 @@
             text-decoration: none;
             color: inherit;
         }
+        .logout-button {
+            padding: 10px 15px;
+            background-color: #FF5733;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .logout-button:hover {
+            background-color: #C70039;
+        }
         .main-content {
             text-align: center;
             margin-top: 50px;
@@ -78,20 +91,54 @@
 <body>
     <header>
         <h1>Welcome</h1>
+        {% if user %}
+        <p>You are logged in! Hello, Mr. {{ user }}!</p>
+        <button onclick="alert('Special button for logged-in users!')">Special Button</button>
+        <form action="/logout" method="get">
+        <a href="/logout" class="logout-button">Logout</a> 
+        </form>
+        {% else %}
         <div class="corner-buttons">
             <button><a href="/signin">Sign In</a></button>
             <button><a href="/signup">Sign Up</a></button>
         </div>
+        {% endif %}
+
+
+
     </header>
     
     <div class="main-content">
         <h1>Welcome to Our Website!</h1>
         <p>Explore, discover, and enjoy!</p>
+
+        {% if user %}
+
         <div class="buttons">
-            <a href="/page1">Go to Page 1</a>
-            <a href="/page2">Go to Page 2</a>
-            <a href="/page3">Go to Page 3</a>
+            <a href="/animal/show">Show animals</a>
+            
+            {% if role == 1 %}
+            <a href="/animal/add_species">Add new species</a>
+            <a href="/page3">Remove species</a>
+
+            <a href="/animal/add_animal">Add new animal to refuge</a>
+            <a href="/animal/make_adopt">Record adoption</a>
+
+            <a href="/add_worker">Add new worker</a>
+            <a href="/remove_worker">Fire worker</a>
+
+            <a href="/remove_user">Remove User</a>
+
+            {% elif role == 2 %}
+            <a href="/animal/adopt">Make an adoption</a>
+            
+            {% elif role == 3 %}
+            <a href="/animal/add_animal">Add new animal to refuge</a>
+            <a href="/animal/make_adopt">Record adoption</a>
+            {% endif %}
         </div>
+        {% endif %}
+
     </div>
 </body>
 </html>
