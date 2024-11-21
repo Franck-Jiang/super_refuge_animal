@@ -1,22 +1,8 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Date, ForeignKey, UUID, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, Float, Date, ForeignKey, UUID, DateTime, Boolean
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.orm import sessionmaker
 from db import Base
 from datetime import datetime
-
-class Owner(Base):
-    __tablename__ = 'owner'
-    
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    first_name = Column(String(100), nullable=False)
-    last_name = Column(String(100), nullable=False)
-    email = Column(String(255), nullable=False, unique=True)
-    phone = Column(String(15))
-    created_at = Column(Date)
-
-    def __repr__(self):
-        return f"<Owner(id={self.id}, first_name='{self.first_name}', last_name='{self.last_name}', email='{self.email}', phone='{self.phone}')>"
-
 class AnimalSpecies(Base):
     __tablename__ = 'animal_species'
 
@@ -37,7 +23,8 @@ class AnimalRecord(Base):
     arrival_date = Column(Date)
     animal_id = Column(Integer, ForeignKey('animal_species.id'), nullable=False)
     animal = relationship("AnimalSpecies", backref="animal_records")
-
+    adopted = Column(Boolean)
+    
     def __repr__(self):
         return f"<AnimalRecord(id={self.id}, name='{self.name}', animal_id={self.animal_id}, weight={self.weight}, arrival_date='{self.arrival_date}')>"
 
@@ -62,3 +49,24 @@ class User(Base):
 
     user_category = relationship("UserCategory", back_populates="users")
     
+    def __repr__(self):
+        return (
+            f"<User(id={self.id}, username='{self.username}', category_id={self.category_id}, "
+            f"created_at='{self.created_at}', updated_at='{self.updated_at}')>"
+        )    
+class Adoption(Base):
+    __tablename__ = "adoption_list"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    animal_id = Column(Integer, ForeignKey('animal_records.id'), nullable=False)
+    user_adopter_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    validated = Column(Boolean)
+    worker_validation_id = Column(Integer, ForeignKey('user.id'))
+    adoption_date = Column(DateTime)
+    
+    def __repr__(self):
+        return (
+            f"<Adoption(id={self.id}, animal_id={self.animal_id}, user_adopter_id={self.user_adopter_id}, "
+            f"validated={self.validated}, worker_validation_id={self.worker_validation_id}, "
+            f"adoption_date='{self.adoption_date}')>"
+        )

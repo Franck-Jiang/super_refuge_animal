@@ -27,6 +27,7 @@ app.add_middleware(SessionMiddleware, secret_key="SecretKey")
 app.include_router(router_animal)
 app.include_router(router_user)
 
+# ================== No authentication needed ================== #
 @app.get("/")
 def read_root(request: Request):
     try :
@@ -41,34 +42,11 @@ def read_root(request: Request):
 
 def is_logged_in(request: Request):
     return request.session.get("user") is not None
-
-@app.get("/add_animal")
-async def add_animal_form(request: Request):
-    species = session.query(AnimalSpecies).all()
-    print("species queried")
-    print(species)
-    return templates.TemplateResponse("add_animal.html", {"request": request, "species": species})
-
-@app.post("/query")
-def query(request: Request, query: str):
-    a = session.execute(text(query))
-    print(a.all())
-    session.commit()
-    session.flush()
     
 @app.get("/role")
 def get_role(request: Request):
     user_logged_in = is_logged_in(request)
-    print(f"{user_logged_in=}")
+    # print(f"{user_logged_in=}")
     return templates.TemplateResponse("index.html", {"request": request, "user_logged_in": user_logged_in})
 
-    # _, role = user
-    # if role == 1 :
-    #     return templates.TemplateResponse("admin.html", {"request": request})
-    # elif role == 2 :
-    #     return templates.TemplateResponse("user.html", {"request": request})
-    # elif role == 3 :
-    #     return templates.TemplateResponse("worker.html", {"request": request})
-    # else:
-    #     return templates.TemplateResponse("welcome.html", {"request": request})
     

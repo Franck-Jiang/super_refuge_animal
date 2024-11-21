@@ -1,5 +1,5 @@
 import jwt
-from fastapi import HTTPException, Depends, status, Header
+from fastapi import HTTPException, Depends, status, Header, Request
 from sqlalchemy.orm import Session
 
 from services.auth import JWT_SECRET_KEY, JWT_SECRET_ALGORITHM
@@ -85,13 +85,20 @@ def get_current_user(access_token: str = Header(None)) -> tuple[str, int]:
     return username, role
 
 def allowed_roles(roles: list[int]):
-    def role_checker(user_data: tuple[str, int] = Depends(get_current_user)):
-        _, user_role = user_data 
-        if user_role not in roles:
+    def role_checker(request: Request):
+        try :
+            user = request.session["user"]
+            role = request.session["role"]
+            if role not in roles:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Access forbidden: Insufficient permissions"
+                )
+            return user
+        except:
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Access forbidden: Insufficient permissions"
-            )
-        return user_data
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Access forbidden: Insufficient permissions"
+                )
     return role_checker
 

@@ -9,16 +9,18 @@ from crud import create_user
 from schemas.user import User as model_user
 from db import get_db, session
 from models import AnimalSpecies, User
-from auth import generate_access_token
+from auth import generate_access_token, allowed_roles
+
 
 
 router_user = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
+# ================== No authentication needed ================== #
 
 @router_user.get("/signup")
 async def sign_up(request: Request):
-    print("HTML lololol")
+    # print("HTML lololol")
     return templates.TemplateResponse("signup.html", {"request": request})
 
 @router_user.post("/signup")
@@ -41,7 +43,6 @@ def signup(request: Request,
                                                        "access_token": access_token, 
                                                        "user": new_user.username})
 
-
 @router_user.get("/signin")
 def signup(request: Request):
     return templates.TemplateResponse("signin.html", {"request": request})
@@ -51,12 +52,12 @@ def signin(request: Request,
            username: str = Form(),
            password: str = Form(), 
            db: Session = Depends(get_db)):
-    print("here")
+    # print("here")
     hashed = hashlib.sha256(password.encode()).hexdigest()
     query = select(User).where(User.username == username, User.password == hashed)
     res = db.execute(query).scalars().first()  
     if res:
-        print(res)
+        # print(res)
         request.session["user"] = res.username
         request.session["role"] = res.category_id
         access_token = generate_access_token(db=db, 
@@ -67,13 +68,16 @@ def signin(request: Request,
     else:
         return templates.TemplateResponse("signin.html", {"request": request, "error_message": "Invalid username or password"})
     
+# ================== User/Worker/Admin  ================== #
 
 @router_user.get("/logout")
 def logout(request: Request):
     request.session.clear() 
     return RedirectResponse(url="/", status_code=303)
 
-@router_user.get("/add_worker")
+# ================== Admin  ================== #
+
+@router_user.get("/add_worker", dependencies=[Depends(allowed_roles([1]))])
 def add_worker(request: Request, db: Session = Depends(get_db)):
     users = db.query(User).filter(User.category_id==2).all()
     api_action = "/add_worker"
@@ -93,13 +97,13 @@ def add_worker_post(request: Request, user_id: int = Form(...), db: Session = De
     else:
         return {"error": "User not found"}
     
-@router_user.get("/remove_worker")
+@router_user.get("/remove_worker", dependencies=[Depends(allowed_roles([1]))])
 def add_worker(request: Request, db: Session = Depends(get_db)):
     users = db.query(User).filter(User.category_id==3).all()
     api_action = "/remove_worker"
     return templates.TemplateResponse("add_worker.html", {"request": request, "users": users, "api_action": api_action})
 
-@router_user.post("/remove_worker")
+@router_user.post("/remove_worker", dependencies=[Depends(allowed_roles([1]))])
 def add_worker_post(request: Request, user_id: int = Form(...), db: Session = Depends(get_db)):
     # Find the user based on the user_id from the form
     selected_user = db.query(User).filter(User.id==user_id).first()
@@ -113,13 +117,13 @@ def add_worker_post(request: Request, user_id: int = Form(...), db: Session = De
     else:
         return {"error": "User not found"}
     
-@router_user.get("/remove_user")
+@router_user.get("/remove_user", dependencies=[Depends(allowed_roles([1]))])
 def add_worker(request: Request, db: Session = Depends(get_db)):
     users = db.query(User).filter(User.category_id==2).all()
     api_action = "/remove_user"
     return templates.TemplateResponse("add_worker.html", {"request": request, "users": users, "api_action": api_action})
 
-@router_user.post("/remove_user")
+@router_user.post("/remove_user", dependencies=[Depends(allowed_roles([1]))])
 def add_worker_post(request: Request, user_id: int = Form(...), db: Session = Depends(get_db)):
     # Find the user based on the user_id from the form
     selected_user = db.query(User).filter(User.id==user_id).first()

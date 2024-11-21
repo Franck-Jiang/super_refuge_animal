@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adopt an Animal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .adopt-button {
+            margin-top: 20px;
+            display: none; /* Initially hidden */
+        }
+        .adopt-button button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .adopt-button button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Adopt an Animal</h1>
+        
+        <!-- Filter Section -->
+        <div class="form-group">
+            <label for="animal-select">Filter Animals:</label>
+            <select id="animal-select" required>
+                <option value="">-- Show All --</option>
+                {% for animal in animals_record %}
+                <option value="{{ animal.id }}">{{ animal.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Animal Table -->
+        <table id="animal-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Weight</th>
+                    <th>Arrival Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for animal in animals_record %}
+                <tr data-animal-id="{{ animal.id }}">
+                    <td>{{ animal.name }}</td>
+                    <td>{{ animal.description }}</td>
+                    <td>{{ animal.weight }}</td>
+                    <td>{{ animal.arrival_date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Adopt Button -->
+        <div class="adopt-button" id="adopt-button">
+            <form action="/animal/adopt" method="POST">
+                <input type="hidden" name="animal_id" id="animal-id-input">
+                <button type="submit">Adopt</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const select = document.getElementById('animal-select');
+        const rows = document.querySelectorAll('#animal-table tbody tr');
+        const adoptButtonDiv = document.getElementById('adopt-button');
+        const animalIdInput = document.getElementById('animal-id-input');
+
+        select.addEventListener('change', () => {
+            const selectedId = select.value;
+
+            rows.forEach(row => {
+                const animalId = row.getAttribute('data-animal-id');
+                
+                if (selectedId === "" || animalId === selectedId) {
+                    row.style.display = ''; // Show matching row
+                } else {
+                    row.style.display = 'none'; // Hide other rows
+                }
+            });
+
+            // Show or hide the Adopt button
+            if (selectedId) {
+                adoptButtonDiv.style.display = 'block';
+                animalIdInput.value = selectedId; // Set the selected animal ID in the form input
+            } else {
+                adoptButtonDiv.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

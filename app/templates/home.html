@@ -89,6 +89,20 @@
     </style>
 </head>
 <body>
+    {% if request.session.get("flash_message") %}
+    <div class="flash-message">
+        {{ request.session.get("flash_message") }}
+    </div>
+    <script>
+        setTimeout(() => {
+            const flashMessage = document.querySelector(".flash-message");
+            if (flashMessage) {
+                flashMessage.remove();
+            }
+        }, 5000); // Remove the message after 5 seconds
+    </script>
+    {% endif %}
+
     <header>
         <h1>Welcome</h1>
         {% if user %}
@@ -119,10 +133,10 @@
             
             {% if role == 1 %}
             <a href="/animal/add_species">Add new species</a>
-            <a href="/page3">Remove species</a>
+            <a href="/animal/remove_species">Remove species</a>
 
             <a href="/animal/add_animal">Add new animal to refuge</a>
-            <a href="/animal/make_adopt">Record adoption</a>
+            <a href="/animal/valid_adopt">Valid adoption</a>
 
             <a href="/add_worker">Add new worker</a>
             <a href="/remove_worker">Fire worker</a>
@@ -134,7 +148,7 @@
             
             {% elif role == 3 %}
             <a href="/animal/add_animal">Add new animal to refuge</a>
-            <a href="/animal/make_adopt">Record adoption</a>
+            <a href="/animal/valid_adopt">Valid adoption</a>
             {% endif %}
         </div>
         {% endif %}
